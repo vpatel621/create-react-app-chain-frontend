@@ -85,9 +85,16 @@ aside,
   border: 1px solid lightgrey;
   padding: 5px 15px;
 }
+caption {
+  caption-side: top;
+  text-align: center;
+  font-size: 38px;
+  color: #fff;
+}
 
-@media (min-width: 1921px) {
+/* @media (min-width: 1921px) {
   body {
     font-size: 18px;
+    color: #aaa;
   }
-}
+} */
