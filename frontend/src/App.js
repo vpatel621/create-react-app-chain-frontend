@@ -8,7 +8,8 @@ import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
 export default function App() {
   const ws = useRef(null);
   const [buy, setBuy] = useState([]);
-  const [filterC, setFilter] = useState([]);
+  const [filterSell, setFilterSell] = useState([]);
+  const [filterBuy, setFilterBuy] = useState([]);
   const [status, setStatus] = useState(false);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function App() {
     if (!ws.current) return;
     ws.current.onmessage = (res) => {
       const message = JSON.parse(res.data);
-      setBuy(message.buyer);
+      setBuy(message.data);
     };
   }, [buy]);
 
@@ -33,10 +34,15 @@ export default function App() {
     setStatus(true);
     let filteredCryptos = buy;
 
-    const res = filteredCryptos.filter((item) => {
-      return item.name === type;
+    const seller = filteredCryptos.filter((item) => {
+      return item.name === type && item.type === 'seller';
     });
-    setFilter(res);
+    const buyer = filteredCryptos.filter((item) => {
+      return item.name === type && item.type === 'buyer';
+    });
+    setFilterBuy(buyer);
+    seller.sort((a, b) => b.price - a.price);
+    setFilterSell(seller);
   }
 
   return (
@@ -50,7 +56,7 @@ export default function App() {
       {status ? (
         <div>
           <Table variant='dark'>
-            <caption> Buy Data </caption>
+            <caption> Looking to Buy? </caption>
 
             <thead>
               <tr>
@@ -60,7 +66,7 @@ export default function App() {
               </tr>
             </thead>
             <tbody>
-              {filterC.map((item) => {
+              {filterBuy.map((item) => {
                 return (
                   <tr>
                     <td>
@@ -81,7 +87,7 @@ export default function App() {
           </Table>
           <span>
             <Table variant='dark'>
-              <caption> Sell Data </caption>
+              <caption> Looking to Sell?</caption>
 
               <thead>
                 <tr>
@@ -91,7 +97,7 @@ export default function App() {
                 </tr>
               </thead>
               <tbody>
-                {filterC.map((item) => {
+                {filterSell.map((item) => {
                   return (
                     <tr>
                       <td>
@@ -112,7 +118,9 @@ export default function App() {
             </Table>
           </span>
         </div>
-      ) : null}
+      ) : (
+        <div> Choose a currency</div>
+      )}
     </div>
   );
 }
