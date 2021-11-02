@@ -60,7 +60,7 @@ export default function App() {
   }, [buy]);
 
   function filterMethod(type) {
-    setStatus(false);
+    setStatus(true);
 
     if (type === 'BTC') {
       setFilterBuy(bitcoinBuy);
@@ -71,7 +71,6 @@ export default function App() {
       setFilterSell(ethereumSell.sort((a, b) => b.price - a.price));
       setFilterHistorical(historical[1]);
     }
-    setStatus(true);
   }
 
   return (
@@ -86,7 +85,9 @@ export default function App() {
       <div>
         {status ? (
           <div>
-            <LineGraph props={filterHistorical} />
+            <div id='graph'>
+              <LineGraph props={filterHistorical} height={10} />
+            </div>
             <SellTable buyer={filterBuy} />
             <BuyTable seller={filterSell} />
           </div>

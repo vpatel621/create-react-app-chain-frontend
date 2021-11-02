@@ -1,9 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Line } from 'react-chartjs-2';
 
 function LineGraph(props) {
-  console.log('props', props.props);
-  const { prices } = props.props;
+  const { prices, name } = props.props;
 
   const dates = prices.map((arr) =>
     new Date(arr[0]).toLocaleDateString('en-US')
@@ -17,7 +16,7 @@ function LineGraph(props) {
           labels: dates,
           datasets: [
             {
-              label: 'Bitcoin Price',
+              label: `${name} Price`,
               // y-axis data plotting values
               data: values,
               fill: false,

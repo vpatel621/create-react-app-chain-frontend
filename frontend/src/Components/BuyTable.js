@@ -7,7 +7,7 @@ export default function BuyTable(props) {
   return (
     <div className='right'>
       <Table variant='dark'>
-        <caption> Looking to Sell? </caption>
+        <caption> Sell Table </caption>
 
         <thead>
           <tr>
