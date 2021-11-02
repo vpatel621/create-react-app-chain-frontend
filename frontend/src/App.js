@@ -4,6 +4,8 @@ import { Icon, InlineIcon } from '@iconify/react';
 import ethIcon from '@iconify/icons-cryptocurrency/eth';
 import btc from '../node_modules/cryptocurrency-icons/32/color/btc.png';
 import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
+import BuyTable from './Components/BuyTable';
+import SellTable from './Components/SellTable';
 
 export default function App() {
   const ws = useRef(null);
@@ -28,6 +30,9 @@ export default function App() {
       const message = JSON.parse(res.data);
       setBuy(message.data);
     };
+    if (filterBuy.length > 0) {
+      filterMethod(filterBuy[0].name);
+    }
   }, [buy]);
 
   function filterMethod(type) {
@@ -55,68 +60,8 @@ export default function App() {
       </div>
       {status ? (
         <div>
-          <Table variant='dark'>
-            <caption> Looking to Buy? </caption>
-
-            <thead>
-              <tr>
-                <th> </th>
-                <th>Exchange</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filterBuy.map((item) => {
-                return (
-                  <tr>
-                    <td>
-                      <img
-                        alt=''
-                        src='https://cryptologos.cc/logos/ethereum-eth-logo.png'
-                        width='20'
-                        height='30'
-                        style={{ display: 'vertical-align:top' }}
-                      />
-                    </td>
-                    <td>{item.source}</td>
-                    <td>{item.price}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-          <span>
-            <Table variant='dark'>
-              <caption> Looking to Sell?</caption>
-
-              <thead>
-                <tr>
-                  <th> </th>
-                  <th>Exchange</th>
-                  <th>Price</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filterSell.map((item) => {
-                  return (
-                    <tr>
-                      <td>
-                        <img
-                          alt=''
-                          src='https://cryptologos.cc/logos/ethereum-eth-logo.png'
-                          width='20'
-                          height='30'
-                          style={{ display: 'vertical-align:top' }}
-                        />
-                      </td>
-                      <td>{item.source}</td>
-                      <td>{item.price}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </span>
+          <BuyTable seller={filterSell} />
+          <SellTable buyer={filterBuy} />
         </div>
       ) : (
         <div> Choose a currency</div>
