@@ -1,17 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table } from 'react-bootstrap';
+import SellTable from './Components/SellTable.js';
+import BuyTable from './Components/BuyTable.js';
 import { Icon, InlineIcon } from '@iconify/react';
 import ethIcon from '@iconify/icons-cryptocurrency/eth';
 import btc from '../node_modules/cryptocurrency-icons/32/color/btc.png';
 import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
-import BuyTable from './Components/BuyTable';
-import SellTable from './Components/SellTable';
+import LineGraph from './Components/HistoricalChart';
 
 export default function App() {
   const ws = useRef(null);
   const [buy, setBuy] = useState([]);
+  const [historical, setHistorical] = useState([]);
+  const [filterHistorical, setFilterHistorical] = useState([]);
   const [filterSell, setFilterSell] = useState([]);
   const [filterBuy, setFilterBuy] = useState([]);
+  const [bitcoinBuy, setBitcoinBuy] = useState([]);
+  const [bitcoinSell, setBitcoinSell] = useState([]);
+  const [ethereumBuy, setEthereumBuy] = useState([]);
+  const [ethereumSell, setEthereumSell] = useState([]);
   const [status, setStatus] = useState(false);
 
   useEffect(() => {
@@ -29,43 +36,64 @@ export default function App() {
     ws.current.onmessage = (res) => {
       const message = JSON.parse(res.data);
       setBuy(message.data);
+      setHistorical(message.history);
+      const ethSell = buy.filter(
+        (item) => item.name === 'ETH' && item.type === 'seller'
+      );
+      const ethBuy = buy
+        .filter((item) => item.name === 'ETH' && item.type === 'buyer')
+        .sort((a, b) => a.price - b.price);
+      const bitBuy = buy
+        .filter((item) => item.name === 'BTC' && item.type === 'buyer')
+        .sort((a, b) => a.price - b.price);
+      const bitSell = buy.filter(
+        (item) => item.name === 'BTC' && item.type === 'seller'
+      );
+      setEthereumBuy(ethBuy);
+      setEthereumSell(ethSell);
+      setBitcoinBuy(bitBuy);
+      setBitcoinSell(bitSell);
     };
-    if (filterBuy.length > 0) {
+    if (status) {
       filterMethod(filterBuy[0].name);
     }
   }, [buy]);
 
   function filterMethod(type) {
-    setStatus(true);
-    let filteredCryptos = buy;
+    setStatus(false);
 
-    const seller = filteredCryptos.filter((item) => {
-      return item.name === type && item.type === 'seller';
-    });
-    const buyer = filteredCryptos.filter((item) => {
-      return item.name === type && item.type === 'buyer';
-    });
-    setFilterBuy(buyer);
-    seller.sort((a, b) => b.price - a.price);
-    setFilterSell(seller);
+    if (type === 'BTC') {
+      setFilterBuy(bitcoinBuy);
+      setFilterSell(bitcoinSell.sort((a, b) => b.price - a.price));
+      setFilterHistorical(historical[0]);
+    } else {
+      setFilterBuy(ethereumBuy);
+      setFilterSell(ethereumSell.sort((a, b) => b.price - a.price));
+      setFilterHistorical(historical[1]);
+    }
+    setStatus(true);
   }
 
   return (
     <div className='container'>
-      <h2>Cryptocurrencys</h2>
+      <h2>Cryptocurrencies</h2>
       <div className='row-of-crypto'>
-        <img src={btc} onClick={() => filterMethod('BTC')} />
+        <img src={btc} alt='' onClick={() => filterMethod('BTC')} />
         <span> </span>
-        <img src={eth} onClick={() => filterMethod('ETH')} />
+        <img src={eth} alt='' onClick={() => filterMethod('ETH')} />
       </div>
-      {status ? (
-        <div>
-          <BuyTable seller={filterSell} />
-          <SellTable buyer={filterBuy} />
-        </div>
-      ) : (
-        <div> Choose a currency</div>
-      )}
+
+      <div>
+        {status ? (
+          <div>
+            <LineGraph props={filterHistorical} />
+            <SellTable buyer={filterBuy} />
+            <BuyTable seller={filterSell} />
+          </div>
+        ) : (
+          <div>Pick a currency</div>
+        )}
+      </div>
     </div>
   );
 }

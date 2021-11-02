@@ -91,6 +91,14 @@ caption {
   font-size: 38px;
   color: #fff;
 }
+.left {
+  width: 45%;
+  float: left;
+}
+.right {
+  width: 45%;
+  float: right;
+}
 
 /* @media (min-width: 1921px) {
   body {

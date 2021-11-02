@@ -3,7 +3,7 @@ import { Line } from 'react-chartjs-2';
 
 function LineGraph(props) {
   console.log('props', props.props);
-  const { prices } = props.props[0];
+  const { prices } = props.props;
 
   const dates = prices.map((arr) =>
     new Date(arr[0]).toLocaleDateString('en-US')
