@@ -40,7 +40,13 @@ export default function SellTable(props) {
                   )}
                 </td>
                 <td>{item.source}</td>
-                <td>{item.price}</td>
+                {item.change > 0.01 ? (
+                  <td className='red'>{item.price}</td>
+                ) : item.change < -0.01 ? (
+                  <td className='green'>{item.price}</td>
+                ) : (
+                  <td className='default'>{item.price}</td>
+                )}
               </tr>
             );
           })}

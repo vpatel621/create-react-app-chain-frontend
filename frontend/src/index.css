@@ -99,9 +99,15 @@ caption {
   width: 45%;
   float: right;
 }
-#graph {
-  height: 300;
-  width: 10;
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}
+.default {
+  color: #aaa;
 }
 
 @media (min-width: 1921px) {

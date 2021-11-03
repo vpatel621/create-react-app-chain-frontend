@@ -5,7 +5,10 @@ export default function BuyTable(props) {
   const { seller } = props;
 
   return (
-    <div className='right'>
+    <div
+      className='right'
+      style={{ border: '2px solid red', borderRadius: '5px' }}
+    >
       <Table variant='dark'>
         <caption> Sell Table </caption>
 
@@ -40,7 +43,13 @@ export default function BuyTable(props) {
                   )}
                 </td>
                 <td>{item.source}</td>
-                <td>{item.price}</td>
+                {item.change > 0.01 ? (
+                  <td className='red'>{item.price}</td>
+                ) : item.change < -0.01 ? (
+                  <td className='green'>{item.price}</td>
+                ) : (
+                  <td className='default'>{item.price}</td>
+                )}
               </tr>
             );
           })}

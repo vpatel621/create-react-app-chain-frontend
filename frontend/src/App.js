@@ -72,7 +72,7 @@ export default function App() {
       setFilterHistorical(historical[1]);
     }
   }
-
+  console.log(filterBuy);
   return (
     <div className='container'>
       <h2>Cryptocurrencies</h2>
