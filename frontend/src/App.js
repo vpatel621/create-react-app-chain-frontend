@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Tables from './Components/Tables.js';
-import { Icon, InlineIcon } from '@iconify/react';
-import ethIcon from '@iconify/icons-cryptocurrency/eth';
+import { filterAndSort } from './utility.js';
+
 import btc from '../node_modules/cryptocurrency-icons/32/color/btc.png';
 import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
 import LineGraph from './Components/HistoricalChart';
+import initializeWebSocketConnection from './websocket.js';
 
 export default function App() {
   const ws = useRef(null);
@@ -20,13 +21,9 @@ export default function App() {
   const [status, setStatus] = useState(false);
 
   useEffect(() => {
-    ws.current = new WebSocket('ws://localhost:3030');
-    ws.current.onopen = () => console.log('ws opened');
-    ws.current.onclose = () => console.log('ws closed');
+    const url = process.env.ReactURL || 'ws://localhost:3030';
 
-    return () => {
-      ws.current.close();
-    };
+    initializeWebSocketConnection(ws, url);
   }, []);
 
   useEffect(() => {
@@ -35,38 +32,27 @@ export default function App() {
       const message = JSON.parse(res.data);
       setBuy(message.data);
       setHistorical(message.history);
-      const ethSell = buy.filter(
-        (item) => item.name === 'ETH' && item.type === 'seller'
-      );
-      const ethBuy = buy
-        .filter((item) => item.name === 'ETH' && item.type === 'buyer')
-        .sort((a, b) => a.price - b.price);
-      const bitBuy = buy
-        .filter((item) => item.name === 'BTC' && item.type === 'buyer')
-        .sort((a, b) => a.price - b.price);
-      const bitSell = buy.filter(
-        (item) => item.name === 'BTC' && item.type === 'seller'
-      );
-      setEthereumBuy(ethBuy);
-      setEthereumSell(ethSell);
-      setBitcoinBuy(bitBuy);
-      setBitcoinSell(bitSell);
+      setEthereumBuy(filterAndSort(buy, 'ETH', 'seller'));
+      setEthereumSell(filterAndSort(buy, 'ETH', 'buyer'));
+      setBitcoinBuy(filterAndSort(buy, 'BTC', 'buyer'));
+      setBitcoinSell(filterAndSort(buy, 'BTC', 'seller'));
     };
     if (status) {
       filterMethod(filterBuy[0].name);
     }
-  }, [buy]);
+  }, [buy, filterBuy, status, filterSell, filterMethod]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function filterMethod(type) {
     setStatus(true);
 
     if (type === 'BTC') {
       setFilterBuy(bitcoinBuy);
-      setFilterSell(bitcoinSell.sort((a, b) => b.price - a.price));
+      setFilterSell(bitcoinSell);
       setFilterHistorical(historical[0]);
     } else {
       setFilterBuy(ethereumBuy);
-      setFilterSell(ethereumSell.sort((a, b) => b.price - a.price));
+      setFilterSell(ethereumSell);
       setFilterHistorical(historical[1]);
     }
   }
@@ -90,7 +76,7 @@ export default function App() {
             <Tables data={filterSell} />
           </div>
         ) : (
-          <div>Pick a currency</div>
+          <div>Choose a currency</div>
         )}
       </div>
     </div>

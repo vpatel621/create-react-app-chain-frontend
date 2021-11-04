@@ -1,23 +1,21 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
+import TableRows from './TableRows';
+import { imageUrl, titleFormatter } from '../utility.js';
 
 export default function Tables(props) {
   const { data } = props;
 
-  let string = data[0].type.slice(0, data[0].type.length - 2);
-  let title = string.charAt(0).toUpperCase() + string.slice(1);
+  let buyOrSell = data[0].type;
+  let tableTitle = titleFormatter(buyOrSell);
+
+  let coinName = data[0].name;
+  const imgLink = imageUrl(coinName);
 
   return (
-    <div
-      className='left'
-      style={{
-        backgroundColor: '#212529',
-        borderRadius: '5px',
-        color: '#aaa',
-      }}
-    >
+    <div className='currentPricesTable'>
       <Table variant='dark'>
-        <caption className='default'> {title} Prices (USD) </caption>
+        <caption className='default'> {tableTitle} Prices (USD) </caption>
 
         <thead>
           <tr>
@@ -31,34 +29,10 @@ export default function Tables(props) {
             return (
               <tr key={item.source}>
                 <td>
-                  {item.name === 'ETH' ? (
-                    <img
-                      alt=''
-                      src='https://cryptologos.cc/logos/ethereum-eth-logo.png'
-                      width='30'
-                      height='30'
-                      style={{ display: 'vertical-align:top' }}
-                    />
-                  ) : (
-                    <img
-                      alt=''
-                      src='https://cryptologos.cc/logos/bitcoin-btc-logo.png'
-                      width='30'
-                      height='30'
-                      style={{ display: 'vertical-align:top' }}
-                    />
-                  )}
+                  <img alt='' src={imgLink} width='30' height='30' />
                 </td>
                 <td>{item.source}</td>
-                {item.change > 0.01 ? (
-                  <td className='red'>{item.price}</td>
-                ) : item.change < -0.01 ? (
-                  <td className='green'>
-                    {item.price} <i class='arrow up'></i>
-                  </td>
-                ) : (
-                  <td className='default'>{item.price}</td>
-                )}
+                <TableRows props={item} />
               </tr>
             );
           })}
