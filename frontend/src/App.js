@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table } from 'react-bootstrap';
-import SellTable from './Components/SellTable.js';
-import BuyTable from './Components/BuyTable.js';
+import Tables from './Components/Tables.js';
 import { Icon, InlineIcon } from '@iconify/react';
 import ethIcon from '@iconify/icons-cryptocurrency/eth';
 import btc from '../node_modules/cryptocurrency-icons/32/color/btc.png';
@@ -72,7 +70,7 @@ export default function App() {
       setFilterHistorical(historical[1]);
     }
   }
-  console.log(filterBuy);
+
   return (
     <div className='container'>
       <h2>Cryptocurrencies</h2>
@@ -86,10 +84,10 @@ export default function App() {
         {status ? (
           <div>
             <div id='graph'>
-              <LineGraph props={filterHistorical} height={10} />
+              <LineGraph props={filterHistorical} />
             </div>
-            <SellTable buyer={filterBuy} />
-            <BuyTable seller={filterSell} />
+            <Tables data={filterBuy} />
+            <Tables data={filterSell} />
           </div>
         ) : (
           <div>Pick a currency</div>

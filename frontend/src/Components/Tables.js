@@ -1,26 +1,33 @@
 import React from 'react';
 import { Table } from 'react-bootstrap';
 
-export default function BuyTable(props) {
-  const { seller } = props;
+export default function Tables(props) {
+  const { data } = props;
+
+  let string = data[0].type.slice(0, data[0].type.length - 2);
+  let title = string.charAt(0).toUpperCase() + string.slice(1);
 
   return (
     <div
-      className='right'
-      style={{ border: '2px solid red', borderRadius: '5px' }}
+      className='left'
+      style={{
+        backgroundColor: '#212529',
+        borderRadius: '5px',
+        color: '#aaa',
+      }}
     >
       <Table variant='dark'>
-        <caption> Sell Table </caption>
+        <caption className='default'> {title} Prices (USD) </caption>
 
         <thead>
           <tr>
             <th> </th>
-            <th>Exchange</th>
-            <th>Price</th>
+            <th className='default'>Exchange</th>
+            <th className='default'>Price</th>
           </tr>
         </thead>
-        <tbody>
-          {seller.map((item) => {
+        <tbody className='default'>
+          {data.map((item) => {
             return (
               <tr key={item.source}>
                 <td>
@@ -46,7 +53,9 @@ export default function BuyTable(props) {
                 {item.change > 0.01 ? (
                   <td className='red'>{item.price}</td>
                 ) : item.change < -0.01 ? (
-                  <td className='green'>{item.price}</td>
+                  <td className='green'>
+                    {item.price} <i class='arrow up'></i>
+                  </td>
                 ) : (
                   <td className='default'>{item.price}</td>
                 )}

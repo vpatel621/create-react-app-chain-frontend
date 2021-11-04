@@ -88,26 +88,35 @@ aside,
 caption {
   caption-side: top;
   text-align: center;
-  font-size: 38px;
+  font-size: 34px;
   color: #fff;
 }
 .left {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  background-color: '#212529';
   width: 45%;
   float: left;
+  margin: 2%;
+  border-radius: '5px';
 }
-.right {
-  width: 45%;
-  float: right;
-}
+
 .green {
-  color: green;
+  color: #1ed760;
 }
 
 .red {
-  color: red;
+  color: #ee454d;
 }
 .default {
   color: #aaa;
+}
+
+canvas {
+  background-color: #212529;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 3px;
 }
 
 @media (min-width: 1921px) {
