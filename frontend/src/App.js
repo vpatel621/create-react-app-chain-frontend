@@ -17,43 +17,46 @@ export default function App() {
   const [bitcoinSell, setBitcoinSell] = useState([]);
   const [ethereumBuy, setEthereumBuy] = useState([]);
   const [ethereumSell, setEthereumSell] = useState([]);
-  const [status, setStatus] = useState(false);
+  const [coinSelect, setcoinSelect] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const url = process.env.ReactURL || 'http://localhost:3030/';
+  const url = process.env.URL || 'http://localhost:3030/';
 
   useEffect(() => {
     setTimeout(function () {
-      //Start the timer
-      setLoading(false); //After 1 second, set render to true
+      setLoading(false);
     }, 3000);
-    const sse = new EventSource(url);
+
+    const sseClient = new EventSource(url);
+    sseClient.addEventListener('CACHE_UPDATE', (message) => {
+      getRealtimeData(JSON.parse(message.data));
+    });
+
     function getRealtimeData(res) {
       const { data, history } = res;
-      if (data.length === 8) {
-        setAllCoinPrices(data);
-        setHistorical(history);
-        setEthereumBuy(filterAndSort(allCoinPrices, 'ETH', 'buyer'));
-        setEthereumSell(filterAndSort(allCoinPrices, 'ETH', 'seller'));
-        setBitcoinBuy(filterAndSort(allCoinPrices, 'BTC', 'buyer'));
-        setBitcoinSell(filterAndSort(allCoinPrices, 'BTC', 'seller'));
-        if (status) {
-          filterMethod(filterBuy[0].name);
-        }
+
+      setAllCoinPrices(data);
+      setHistorical(history);
+      setEthereumBuy(filterAndSort(allCoinPrices, 'ETH', 'buyer'));
+      setEthereumSell(filterAndSort(allCoinPrices, 'ETH', 'seller'));
+      setBitcoinBuy(filterAndSort(allCoinPrices, 'BTC', 'buyer'));
+      setBitcoinSell(filterAndSort(allCoinPrices, 'BTC', 'seller'));
+      if (coinSelect) {
+        filterMethod(filterBuy[0].name);
       }
     }
-    sse.onmessage = (message) => getRealtimeData(JSON.parse(message.data));
-    sse.onerror = () => {
-      sse.close();
+
+    sseClient.onerror = () => {
+      sseClient.close();
     };
     return () => {
-      sse.close();
+      sseClient.close();
     };
-  }, [allCoinPrices, filterBuy, status, filterSell, filterMethod, url]);
+  }, [allCoinPrices, filterBuy, coinSelect, filterSell, filterMethod, url]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function filterMethod(type) {
-    setStatus(true);
+    setcoinSelect(true);
 
     if (type === 'BTC') {
       setFilterBuy(bitcoinBuy);
@@ -85,7 +88,7 @@ export default function App() {
             <img src={eth} alt='' onClick={() => filterMethod('ETH')} />
           </div>
           <div>
-            {status ? (
+            {coinSelect ? (
               <div>
                 <div id='graph'>
                   <LineGraph props={filterHistorical} />
