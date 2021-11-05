@@ -1,16 +1,17 @@
 ## About The Project
+
 This web app allows you to monitor the prices of Bitcoin and Ethereum on Coinbase and Gemini Exchanges and look for the best deal to either buy or sell either currency.
 
-This repository only contains the front end  UI of the project. In order to price information, you will need to download and install the following repository.
-https://github.com/vpatel621/chainalysis-backend.git
+For a live demo go to:
 
+This repository only contains the front end UI of the project. In order to price information, you will need to download and install the following repository.
+https://github.com/vpatel621/chainalysis-backend.git
 
 ### Built With
 
-* [React.js](https://reactjs.org/)
-* [Bootstrap](https://getbootstrap.com)
-* [Chart.js](https://www.chartjs.org/)
-
+- [React.js](https://reactjs.org/)
+- [Bootstrap](https://getbootstrap.com)
+- [Chart.js](https://www.chartjs.org/)
 
 ### Prerequisites
 
@@ -20,7 +21,7 @@ https://github.com/vpatel621/chainalysis-backend.git
 
 You must have node package manager installed in order to download the libraries associated with this project.
 
-* npm
+- npm
   ```sh
   npm install npm@latest -g
   ```
@@ -28,7 +29,6 @@ You must have node package manager installed in order to download the libraries 
 ### Installation
 
 _Install by following steps below._
-
 
 1. Clone the repo
    ```sh
