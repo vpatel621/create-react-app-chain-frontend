@@ -20,7 +20,8 @@ export default function App() {
   const [coinSelect, setcoinSelect] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const url = process.env.URL || 'http://localhost:3030/';
+  const url =
+    'https://cryptoexchangechain.herokuapp.com/' || 'http://localhost:3030/';
 
   useEffect(() => {
     setTimeout(function () {
