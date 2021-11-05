@@ -25,7 +25,7 @@ export default function Tables(props) {
           </tr>
         </thead>
         <tbody className='default'>
-          {data.map((item) => {
+          {data.map((item, idx) => {
             return (
               <tr key={item.source}>
                 <td>
@@ -33,6 +33,7 @@ export default function Tables(props) {
                 </td>
                 <td>{item.source}</td>
                 <TableRows props={item} />
+                {idx === 0 ? <div>*</div> : null}
               </tr>
             );
           })}

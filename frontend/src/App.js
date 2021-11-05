@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tables from './Components/Tables.js';
 import { filterAndSort } from './utility.js';
 
 import btc from '../node_modules/cryptocurrency-icons/32/color/btc.png';
 import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
 import LineGraph from './Components/HistoricalChart';
-import initializeWebSocketConnection from './websocket.js';
-
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import Loader from 'react-loader-spinner';
 export default function App() {
-  const ws = useRef(null);
-  const [buy, setBuy] = useState([]);
+  const [allCoinPrices, setAllCoinPrices] = useState([]);
   const [historical, setHistorical] = useState([]);
   const [filterHistorical, setFilterHistorical] = useState([]);
   const [filterSell, setFilterSell] = useState([]);
@@ -19,28 +18,38 @@ export default function App() {
   const [ethereumBuy, setEthereumBuy] = useState([]);
   const [ethereumSell, setEthereumSell] = useState([]);
   const [status, setStatus] = useState(false);
+  const [isLoading, setLoading] = useState(true);
+
+  const url = process.env.ReactURL || 'http://localhost:3030/';
 
   useEffect(() => {
-    const url = process.env.ReactURL || 'ws://localhost:3030';
-
-    initializeWebSocketConnection(ws, url);
-  }, []);
-
-  useEffect(() => {
-    if (!ws.current) return;
-    ws.current.onmessage = (res) => {
-      const message = JSON.parse(res.data);
-      setBuy(message.data);
-      setHistorical(message.history);
-      setEthereumBuy(filterAndSort(buy, 'ETH', 'seller'));
-      setEthereumSell(filterAndSort(buy, 'ETH', 'buyer'));
-      setBitcoinBuy(filterAndSort(buy, 'BTC', 'buyer'));
-      setBitcoinSell(filterAndSort(buy, 'BTC', 'seller'));
-    };
-    if (status) {
-      filterMethod(filterBuy[0].name);
+    setTimeout(function () {
+      //Start the timer
+      setLoading(false); //After 1 second, set render to true
+    }, 3000);
+    const sse = new EventSource(url);
+    function getRealtimeData(res) {
+      const { data, history } = res;
+      if (data.length === 8) {
+        setAllCoinPrices(data);
+        setHistorical(history);
+        setEthereumBuy(filterAndSort(allCoinPrices, 'ETH', 'buyer'));
+        setEthereumSell(filterAndSort(allCoinPrices, 'ETH', 'seller'));
+        setBitcoinBuy(filterAndSort(allCoinPrices, 'BTC', 'buyer'));
+        setBitcoinSell(filterAndSort(allCoinPrices, 'BTC', 'seller'));
+        if (status) {
+          filterMethod(filterBuy[0].name);
+        }
+      }
     }
-  }, [buy, filterBuy, status, filterSell, filterMethod]);
+    sse.onmessage = (message) => getRealtimeData(JSON.parse(message.data));
+    sse.onerror = () => {
+      sse.close();
+    };
+    return () => {
+      sse.close();
+    };
+  }, [allCoinPrices, filterBuy, status, filterSell, filterMethod, url]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   function filterMethod(type) {
@@ -59,26 +68,46 @@ export default function App() {
 
   return (
     <div className='container'>
-      <h2>Cryptocurrencies</h2>
-      <div className='row-of-crypto'>
-        <img src={btc} alt='' onClick={() => filterMethod('BTC')} />
-        <span> </span>
-        <img src={eth} alt='' onClick={() => filterMethod('ETH')} />
-      </div>
-
-      <div>
-        {status ? (
+      {isLoading ? (
+        <Loader
+          type='Puff'
+          color='#00BFFF'
+          height={100}
+          width={100}
+          timeout={3000} //3 secs
+        />
+      ) : (
+        <div>
+          <h2>Cryptocurrencies</h2>
           <div>
-            <div id='graph'>
-              <LineGraph props={filterHistorical} />
-            </div>
-            <Tables data={filterBuy} />
-            <Tables data={filterSell} />
+            <img src={btc} alt='' onClick={() => filterMethod('BTC')} />
+            <span> </span>
+            <img src={eth} alt='' onClick={() => filterMethod('ETH')} />
           </div>
-        ) : (
-          <div>Choose a currency</div>
-        )}
-      </div>
+          <div>
+            {status ? (
+              <div>
+                <div id='graph'>
+                  <LineGraph props={filterHistorical} />
+                </div>
+                <Tables data={filterBuy} />
+                <Tables data={filterSell} />
+                <div
+                  style={{
+                    textAlign: 'right',
+                    marginRight: '5%',
+                    fontSize: 'x-small',
+                  }}
+                >
+                  *Best price
+                </div>
+              </div>
+            ) : (
+              <div>Choose a currency</div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
