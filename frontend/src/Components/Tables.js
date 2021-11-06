@@ -32,8 +32,7 @@ export default function Tables(props) {
                   <img alt='' src={imgLink} width='30' height='30' />
                 </td>
                 <td>{item.source}</td>
-                <TableRows props={item} />
-                {idx === 0 ? <div>*</div> : null}
+                <TableRows props={{ item, idx }} />
               </tr>
             );
           })}

@@ -7,6 +7,7 @@ import eth from '../node_modules/cryptocurrency-icons/32/color/eth.png';
 import LineGraph from './Components/HistoricalChart';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
+
 export default function App() {
   const [allCoinPrices, setAllCoinPrices] = useState([]);
   const [historical, setHistorical] = useState([]);
@@ -20,13 +21,12 @@ export default function App() {
   const [coinSelect, setcoinSelect] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const url =
-    'https://cryptoexchangechain.herokuapp.com/' || 'http://localhost:3030/';
+  const url = process.env.REACT_APP_URL || 'http://localhost:3030/';
 
   useEffect(() => {
     setTimeout(function () {
       setLoading(false);
-    }, 3000);
+    }, 4000);
 
     const sseClient = new EventSource(url);
     sseClient.addEventListener('CACHE_UPDATE', (message) => {
@@ -78,7 +78,7 @@ export default function App() {
           color='#00BFFF'
           height={100}
           width={100}
-          timeout={3000} //3 secs
+          timeout={4000} //3 secs
         />
       ) : (
         <div>
