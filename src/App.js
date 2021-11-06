@@ -21,8 +21,8 @@ export default function App() {
   const [coinSelect, setcoinSelect] = useState(false);
   const [isLoading, setLoading] = useState(true);
 
-  const url = process.env.REACT_APP_URL || 'http://localhost:3030/';
-
+  const url = 'http://localhost:3030/';
+  // process.env.REACT_APP_URL ||
   useEffect(() => {
     setTimeout(function () {
       setLoading(false);
@@ -78,7 +78,7 @@ export default function App() {
           color='#00BFFF'
           height={100}
           width={100}
-          timeout={4000} //3 secs
+          timeout={4000}
         />
       ) : (
         <div>
